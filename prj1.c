@@ -108,7 +108,7 @@ void *robo(void *arg){
 		}
 		else{
 				if(f->m1.state == 2){
-				printf("[R] PEGANDO MEÇA DA MÁQUINA 1...\n");
+				printf("[R] PEGANDO PEÇA DA MÁQUINA 1...\n");
 				f->r.state = 1; // estado carregando peça de m1
 				f->m1.state = 0; // livre
 
@@ -116,7 +116,7 @@ void *robo(void *arg){
 				pthread_cond_broadcast(&f->condMaquinas);
 				}
 				else if(f->m2.state == 2){
-					printf("[R] PEGANDO MEÇA DA MÁQUINA 2...\n");
+					printf("[R] PEGANDO PEÇA DA MÁQUINA 2...\n");
 					f->r.state = 2; // estado carregando peça de m2
 					f->m2.state = 0; // livre
 
