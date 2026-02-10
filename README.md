@@ -6,15 +6,15 @@ Este projeto implementa uma simulação concorrente de uma célula de manufatura
 
 O objetivo do sistema é transformar matéria-prima em peças acabadas e depositá-las na esteira de saída sem causar erros operacionais. O desafio principal é coordenar o uso do robô compartilhado para evitar:
 
-* [cite_start]**Colisão de recursos:** O robô tentar acessar duas máquinas ao mesmo tempo[cite: 45].
-* [cite_start]**Transbordamento (Overflow):** Depositar peças quando o buffer está cheio[cite: 32].
-* [cite_start]**Bloqueio (Deadlock):** O sistema travar porque o buffer está cheio e as máquinas estão bloqueadas esperando o robô[cite: 48].
+* **Colisão de recursos:** O robô tentar acessar duas máquinas ao mesmo tempo.
+* **Transbordamento (Overflow):** Depositar peças quando o buffer está cheio.
+* **Bloqueio (Deadlock):** O sistema travar porque o buffer está cheio e as máquinas estão bloqueadas esperando o robô.
 
 ### Componentes do Sistema
-1.  [cite_start]**Máquinas (M1 e M2):** Processam peças independentemente e aguardam retirada[cite: 8].
-2.  **Robô:** Agente de transporte unitário. [cite_start]Move peças das máquinas para o Buffer[cite: 16].
-3.  [cite_start]**Buffer:** Armazenamento temporário com capacidade limitada a **2 peças**[cite: 31].
-4.  [cite_start]**Consumidor (Agente Externo):** Simula a retirada de peças do buffer para liberar espaço[cite: 42].
+1.  [cite_start]**Máquinas (M1 e M2):** Processam peças independentemente e aguardam retirada.
+2.  **Robô:** Agente de transporte unitário. [cite_start]Move peças das máquinas para o Buffer.
+3.  [cite_start]**Buffer:** Armazenamento temporário com capacidade limitada a **2 peças**.
+4.  [cite_start]**Consumidor (Agente Externo):** Simula a retirada de peças do buffer para liberar espaço.
 
 ---
 
