@@ -91,7 +91,10 @@ void *robo(void *arg){
 			// verifica se o buffer está cheio, caso estiver cheio, o robô espera
 			if(f->buffer_count >= BUFFER_SIZE){
 				printf("[R] BUFFER CHEIO.\n");
+				
 				pthread_cond_wait(&f->condBuffer, &f->mutex);
+
+				printf("[R] ESPAÇO LIBERADO. RETOMANDO OPERAÇÃO.\n");
 			}
 		
 			else{
