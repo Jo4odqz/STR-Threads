@@ -11,10 +11,10 @@ O objetivo do sistema é transformar matéria-prima em peças acabadas e deposit
 * **Bloqueio (Deadlock):** O sistema travar porque o buffer está cheio e as máquinas estão bloqueadas esperando o robô.
 
 ### Componentes do Sistema
-1.  [cite_start]**Máquinas (M1 e M2):** Processam peças independentemente e aguardam retirada.
-2.  **Robô:** Agente de transporte unitário. [cite_start]Move peças das máquinas para o Buffer.
-3.  [cite_start]**Buffer:** Armazenamento temporário com capacidade limitada a **2 peças**.
-4.  [cite_start]**Consumidor (Agente Externo):** Simula a retirada de peças do buffer para liberar espaço.
+1.  **Máquinas (M1 e M2):** Processam peças independentemente e aguardam retirada.
+2.  **Robô:** Agente de transporte unitário. Move peças das máquinas para o Buffer.
+3.  **Buffer:** Armazenamento temporário com capacidade limitada a **2 peças**.
+4.  **Consumidor (Agente Externo):** Simula a retirada de peças do buffer para liberar espaço.
 
 ---
 
