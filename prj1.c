@@ -18,6 +18,10 @@ typedef struct{
 typedef struct{
     int buffer[BUFFER_SIZE];
     int buffer_count;
+	int fila_pedidos[2]; // Guarda o ID da máquina (1 ou 2)
+    int fila_head;  // Onde o robô lê
+    int fila_tail;  // Onde a máquina escreve
+    int fila_count; // Quantos pedidos há na fila
 
     Maquina m1;
     Maquina m2;
@@ -28,27 +32,35 @@ typedef struct{
     pthread_cond_t condRobo; // alarme de condição do robo
 	pthread_cond_t condBuffer;
 	pthread_cond_t ext_ev;
+	
 } Manufatura;
 
 void *maquina1(void *arg){
     Manufatura *f = (Manufatura *)arg;
     while (1) {
-        printf("[M1] PRODUZINDO PECA...\n");
-        sleep(rand() % 3 + 1);  // Tempo de produção
+        if(f->m1.state != 2){
+			printf("[M1] PRODUZINDO PECA...\n");
+        	sleep(rand() % 3 + 1);  // Tempo de produção
 
-		pthread_mutex_lock(&f->mutex);
+			pthread_mutex_lock(&f->mutex);
 
-		f->m1.state = 2;
+			f->fila_pedidos[f->fila_tail] = 1; // ID 1 para Maquina 1
+			f->fila_tail = (f->fila_tail + 1) % 2;
+			f->fila_count++;	
 
-		printf("[M1] PEÇA PRONTA \n");
+			f->m1.state = 2;
+
+			printf("[M1] PEÇA PRONTA \n");
+		}
+			
 
 		pthread_cond_signal(&f->condRobo);
 
-		while(f->m1.state == 2){
-			pthread_cond_wait(&f->condMaquinas, &f->mutex);
-		}
+		
+		pthread_cond_wait(&f->condMaquinas, &f->mutex);
+		
 
-		printf("[M1] TERMINOU A PRODUÇÃO.\n");
+		//printf("[M1] TERMINOU A PRODUÇÃO.\n");
 		pthread_mutex_unlock(&f->mutex);
     }
     return NULL;
@@ -57,22 +69,29 @@ void *maquina1(void *arg){
 void *maquina2(void *arg){
 	Manufatura *f = (Manufatura *)arg;
     while (1){
-        printf("[M2] PRODUZINDO PECA...\n");
-        sleep(rand() % 3 + 1);  // Tempo de produção
+		if(f->m2.state != 2){
+			printf("[M2] PRODUZINDO PECA...\n");
+        	sleep(rand() % 3 + 1);  // Tempo de produção
 
-		pthread_mutex_lock(&f->mutex);
+			pthread_mutex_lock(&f->mutex);
 
-		f->m2.state = 2;
+			f->fila_pedidos[f->fila_tail] = 2; // ID 2 para Maquina 2
+			f->fila_tail = (f->fila_tail + 1) % 2;
+			f->fila_count++;
 
-		printf("[M2] PEÇA PRONTA \n");
+			f->m2.state = 2;
+
+			printf("[M2] PEÇA PRONTA \n");
+		}
+        
 
 		pthread_cond_signal(&f->condRobo);
 
-		while(f->m2.state == 2){
-			pthread_cond_wait(&f->condMaquinas, &f->mutex);
-		}
+		
+		pthread_cond_wait(&f->condMaquinas, &f->mutex);
+		
 
-		printf("[M2] TERMINOU A PRODUÇÃO.\n");
+		//printf("[M2] TERMINOU A PRODUÇÃO.\n");
 		pthread_mutex_unlock(&f->mutex);
     }
 	return NULL;
@@ -107,26 +126,28 @@ void *robo(void *arg){
 			}
 		}
 		else{
-				if(f->m1.state == 2){
-				printf("[R] PEGANDO PEÇA DA MÁQUINA 1...\n");
-				f->r.state = 1; // estado carregando peça de m1
-				f->m1.state = 0; // livre
+			if (f->fila_count == 0) {
+        		printf("[R] SEM TAREFAS. AGUARDANDO FILA...\n");
+        		pthread_cond_wait(&f->condRobo, &f->mutex);
+    		} 
+    		else {
+        		// Pega o ID da máquina que está no início da fila
+        		int id_maquina = f->fila_pedidos[f->fila_head];
+        		f->fila_head = (f->fila_head + 1) % 2;
+        		f->fila_count--;
 
+        		printf("[R] ATENDENDO MÁQUINA %d (ORDEM DE CHEGADA)\n", id_maquina);
 
-				pthread_cond_broadcast(&f->condMaquinas);
-				}
-				else if(f->m2.state == 2){
-					printf("[R] PEGANDO PEÇA DA MÁQUINA 2...\n");
-					f->r.state = 2; // estado carregando peça de m2
-					f->m2.state = 0; // livre
+       			if (id_maquina == 1) {
+            		f->r.state = 1;
+            		f->m1.state = 0;
+        		} else {
+            		f->r.state = 2;
+            		f->m2.state = 0;
+        		}
 
-					pthread_cond_broadcast(&f->condMaquinas);
-				}
-				else{
-					// nada pronto, espera
-					printf("[R] SEM TAREFAS.\n");
-					pthread_cond_wait(&f->condRobo, &f->mutex);
-				}
+        		pthread_cond_broadcast(&f->condMaquinas); // Avisa que a máquina pode voltar
+    		}
 		}
 		pthread_mutex_unlock(&f->mutex);
 	}
@@ -175,6 +196,10 @@ int main() {
 
     man.buffer_count = 0; // inicialização do buffer
 
+	man.fila_head = 0;  // Inicialização da fila
+	man.fila_tail = 0;	// Inicialização da fila
+	man.fila_count = 0;	// Inicialização da fila
+
 	srand(time(NULL));
 
 	pthread_mutex_init(&man.mutex, NULL);
@@ -201,3 +226,4 @@ int main() {
 
     return 0;
 }
+
