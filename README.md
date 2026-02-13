@@ -1,6 +1,6 @@
 # Simulação de Célula de Manufatura Automatizada
 
-Este projeto implementa uma simulação concorrente de uma célula de manufatura automatizada utilizando a linguagem C e a biblioteca `pthread`. O sistema coordena duas máquinas de processamento, um robô industrial compartilhado e uma esteira (buffer) de saída com capacidade limitada.
+Este projeto implementa uma simulação concorrente de uma célula de manufatura automatizada utilizando a linguagem C e a biblioteca `pthread`. O sistema coordena duas máquinas de processamento, um robô industrial compartilhado e uma esteira (buffer) de saída com capacidade limitada. O código foi desenvolvido por João Pedro Dantas de Queiroz e Davi Ramalho Costa Souza, para observar o e compreender o funcionamento do programa, tem-se um [vídeo de explicação](https://youtu.be/5t9rwku8KHw).
 
 ## 📋 Descrição do Problema
 
